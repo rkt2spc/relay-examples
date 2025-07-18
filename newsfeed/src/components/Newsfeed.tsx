@@ -1,26 +1,57 @@
 import type {NewsfeedQuery as NewsfeedQueryType} from './__generated__/NewsfeedQuery.graphql';
+import type { NewsfeedContentsRefetchQuery as NewsfeedContentsRefetchQueryType } from './__generated__/NewsfeedContentsRefetchQuery.graphql';
+import type { NewsfeedContentsFragment$key } from './__generated__/NewsfeedContentsFragment.graphql';
 
 import * as React from "react";
 import { graphql } from "relay-runtime";
+import { useLazyLoadQuery, usePaginationFragment } from "react-relay";
 import Story from "./Story";
-import { useLazyLoadQuery } from "react-relay";
+import InfiniteScrollTrigger from "./InfiniteScrollTrigger";
 
 const NewsfeedQuery = graphql`
   query NewsfeedQuery {
-    topStories {
-      id
-      ...StoryFragment
+    ...NewsfeedContentsFragment
+  }
+`;
+
+const NewsfeedContentsFragment = graphql`
+  fragment NewsfeedContentsFragment on Query
+    @argumentDefinitions (
+      cursor: { type: "String" }
+      count: { type: "Int", defaultValue: 3 }
+    )
+    @refetchable(queryName: "NewsfeedContentsRefetchQuery")
+  {
+    viewer {
+      newsfeedStories(after: $cursor, first: $count)
+        @connection(key: "NewsfeedContentsFragment_newsfeedStories")
+      {
+        edges {
+          node {
+            id
+            ...StoryFragment
+          }
+        }
+      }
     }
   }
 `;
 
 export default function Newsfeed() {
-  const data = useLazyLoadQuery<NewsfeedQueryType>(NewsfeedQuery, {});
-  const { topStories: stories } = data;
-
+  const queryData = useLazyLoadQuery<NewsfeedQueryType>(NewsfeedQuery, {});
+  const {data, loadNext, hasNext, isLoadingNext} = usePaginationFragment<
+    NewsfeedContentsRefetchQueryType,
+    NewsfeedContentsFragment$key
+  >(NewsfeedContentsFragment, queryData);
+  const storyEdges = data.viewer.newsfeedStories.edges;
   return (
     <div className="newsfeed">
-      {stories.map(story => <Story id={story.id} story={story} />)}
+      {storyEdges.map(storyEdge => <Story id={storyEdge.node.id} story={storyEdge.node} />)}
+      <InfiniteScrollTrigger
+        onEndReached={() => loadNext(1)}
+        hasNext={hasNext}
+        isLoadingNext={isLoadingNext}
+      />
     </div>
   );
 }
