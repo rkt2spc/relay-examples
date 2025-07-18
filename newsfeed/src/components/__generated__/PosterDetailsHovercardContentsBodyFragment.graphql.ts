@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b780cc076b35df8225533610048bf0fc>>
+ * @generated SignedSource<<4aac3af4d082e1813c3fd7321cf12ada>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -8,15 +8,14 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { Fragment, ReaderFragment } from 'relay-runtime';
+import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type PosterDetailsHovercardContentsBodyFragment$data = {
-  readonly id: string;
-  readonly joined: string | null;
-  readonly name: string | null;
+  readonly joined: string | null | undefined;
+  readonly name: string | null | undefined;
   readonly profilePicture: {
     readonly " $fragmentSpreads": FragmentRefs<"ImageFragment">;
-  } | null;
+  } | null | undefined;
   readonly " $fragmentType": "PosterDetailsHovercardContentsBodyFragment";
 };
 export type PosterDetailsHovercardContentsBodyFragment$key = {
@@ -30,13 +29,6 @@ const node: ReaderFragment = {
   "metadata": null,
   "name": "PosterDetailsHovercardContentsBodyFragment",
   "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "id",
-      "storageKey": null
-    },
     {
       "alias": null,
       "args": null,
@@ -72,6 +64,6 @@ const node: ReaderFragment = {
   "abstractKey": "__isActor"
 };
 
-(node as any).hash = "ded249c8376bb374c8c5be005ba8523e";
+(node as any).hash = "a0d0e6ca8e16834bd5733f7ac8ed552a";
 
 export default node;
